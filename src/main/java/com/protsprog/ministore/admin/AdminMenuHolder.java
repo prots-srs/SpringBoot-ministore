@@ -1,0 +1,60 @@
+package com.protsprog.ministore.admin;
+
+import java.util.TreeSet;
+
+import com.protsprog.ministore.models.AdminMenuItem;
+
+public class AdminMenuHolder {
+
+    public static TreeSet<AdminMenuItem> getMenu(String activeLink) {
+        final String ROOT_PATH = "/admin";
+
+        String link = "";
+        Boolean active = false;
+        Boolean activeChild = false;
+
+        TreeSet<AdminMenuItem> menu = new TreeSet<>();
+
+        // define root item
+        link = ROOT_PATH;
+        active = link == activeLink;
+        menu.add(
+                new AdminMenuItem(10, "Dashboard", link,
+                        "bx-home-circle", active, null, false));
+
+        // define children items
+        TreeSet<AdminMenuItem> contentMenu = new TreeSet<>();
+
+        activeChild = false;
+
+        // loop items
+        link = ROOT_PATH + "/services";
+        active = link == activeLink;
+
+        if (active) {
+            activeChild = true;
+        }
+        contentMenu.add(
+                new AdminMenuItem(10, "Services", link,
+                        "", active, null, false));
+
+        link = ROOT_PATH + "/products";
+        active = link == activeLink;
+
+        if (active) {
+            activeChild = true;
+        }
+        contentMenu.add(
+                new AdminMenuItem(20, "Products", link,
+                        "", active, null, false));
+
+        // define root item
+        link = "";
+        active = link == activeLink;
+        menu.add(
+                new AdminMenuItem(20, "Content", link,
+                        "bx-layout", active, contentMenu, activeChild));
+
+        return menu;
+    }
+}
