@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html th:replace="~{fragments/admin-layout :: layout (~{::#content})}">
+  <body>
+    <div id="content" th:remove="tag">
+      <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+          <h5 class="card-header" th:text="${seos.title}">List</h5>
+          <!-- <div class="table-responsive text-nowrap"> -->
+          <table class="table">
+            <caption class="ms-4" th:if="${totalPages > 1}">
+              <nav aria-label="Page navigation">
+                <ul class="pagination">
+                  <li class="page-item first" th:if="${currentPage > 1}">
+                    <a class="page-link" th:href="@{/admin/seo?page=1}"
+                      ><i class="tf-icon bx bx-chevrons-left"></i
+                    ></a>
+                  </li>
+                  <li class="page-item prev" th:if="${currentPage > 1}">
+                    <a
+                      class="page-link"
+                      th:href="@{'/admin/seo?page=__${currentPage - 1}__'}"
+                      ><i class="tf-icon bx bx-chevron-left"></i
+                    ></a>
+                  </li>
+
+                  <li
+                    th:class="'page-item' + (${currentPage == i} ? ' active' : '')"
+                    th:each="i: ${#numbers.sequence(1, totalPages)}"
+                  >
+                    <a
+                      th:if="${currentPage != i}"
+                      class="page-link"
+                      th:href="@{'/admin/seo?page=' + ${i}}"
+                      >[[${i}]]</a
+                    >
+                    <a
+                      th:unless="${currentPage != i}"
+                      class="page-link"
+                      href="javascript:void(0);"
+                      >[[${i}]]</a
+                    >
+                  </li>
+
+                  <li
+                    class="page-item next"
+                    th:if="${currentPage < totalPages}"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{'/admin/seo?page=__${currentPage + 1}__'}"
+                      ><i class="tf-icon bx bx-chevron-right"></i
+                    ></a>
+                  </li>
+                  <li
+                    class="page-item last"
+                    th:if="${currentPage < totalPages}"
+                  >
+                    <a
+                      class="page-link"
+                      th:href="@{'/admin/seo?page=__${totalPages}__'}"
+                      ><i class="tf-icon bx bx-chevrons-right"></i
+                    ></a>
+                  </li>
+                </ul>
+              </nav>
+              Elements:
+              <span th:text="${pageSize}"></span>
+              from
+              <span th:text="${totalItems}"></span>
+            </caption>
+            <thead>
+              <tr>
+                <th>Path</th>
+                <th>Title</th>
+                <th>Keywords</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="item : ${list}">
+                <td th:text="${item.path}"></td>
+                <td th:text="${item.title}"></td>
+                <td th:text="${item.keywords}"></td>
+                <td th:text="${item.description}"></td>
+                <td>
+                  <div class="dropdown">
+                    <button
+                      type="button"
+                      class="btn p-0 dropdown-toggle hide-arrow"
+                      data-bs-toggle="dropdown"
+                    >
+                      <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                      <a
+                        class="dropdown-item"
+                        th:href="@{/admin/seo/{id}/edit(id = ${item.id})}"
+                        ><i class="bx bx-edit-alt me-1"></i> Edit</a
+                      >
+                      <a
+                        class="dropdown-item"
+                        href="javascript:void(0);"
+                        th:onclick="'sendDeleteRequest(\'' + @{/admin/seo/{id}(id = ${item.id})} + '\')'"
+                      >
+                        <i class="bx bx-trash me-1"></i> Delete
+                      </a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <script th:inline="javascript">
+        function sendDeleteRequest(path) {
+          var xhr = new XMLHttpRequest();
+          xhr.open("DELETE", path);
+          xhr.setRequestHeader("[(${_csrf.headerName})]", "[(${_csrf.token})]");
+          xhr.send();
+          xhr.onload = function () {
+            if (this.status == 204) {
+              location.reload(true);
+            }
+          };
+        }
+      </script>
+    </div>
+  </body>
+</html>

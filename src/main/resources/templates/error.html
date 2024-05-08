@@ -72,9 +72,10 @@
       <div class="misc-wrapper">
         <h2 class="mb-2 mx-2">Something happened...</h2>
 
-        <p class="mb-4 mx-2" th:text="${message}">
+        <p class="mb-4 mx-2" th:if="${message}" th:text="${message}">
           Oops! 😖 The requested URL was not found on this server.
         </p>
+        <p class="mb-4 mx-2" th:if="${error}" th:text="${error}"></p>
         <a th:href="@{/}" class="btn btn-primary">Back to home</a><br />
         <a th:href="@{/admin}" class="btn btn-primary">Back to admin</a>
         <div class="mt-3">

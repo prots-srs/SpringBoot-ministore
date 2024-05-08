@@ -10,8 +10,6 @@ import java.util.ArrayList;
 @Repository
 public interface ServiceRepository extends CrudRepository<ServiceItem, Long> {
 
-    boolean existsById(@SuppressWarnings("null") Long id);
-
     ArrayList<ServiceItem> findAllByOrderBySortAsc();
 
     ArrayList<ServiceItem> findByActiveOrderBySortAsc(Boolean active);

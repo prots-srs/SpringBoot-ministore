@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html th:replace="~{fragments/admin-layout :: layout (~{::#content})}">
+  <body>
+    <div id="content" th:remove="tag">
+      <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+          <h5 class="card-header" th:text="${seos.title}">List</h5>
+          <!-- <div class="table-responsive text-nowrap"> -->
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Sorting</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Icon class</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody class="table-border-bottom-0">
+              <tr th:each="item : ${list}">
+                <td th:text="${item.sort}"></td>
+                <td>
+                  <strong th:text="${item.title}"></strong>
+                </td>
+                <td th:text="${item.description}"></td>
+                <td>
+                  <div class="icon-box">
+                    <div class="icon-box-icon">
+                      <svg th:class="${item.iconClass}">
+                        <use th:xlink:href="'#' + ${item.iconClass}"></use>
+                      </svg>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span
+                    th:class="${item.active}? 'badge me-1 bg-label-primary' : 'badge me-1 bg-label-secondary'"
+                    th:text="${item.active}? #{active} : #{deactived}"
+                  ></span>
+                </td>
+                <td>
+                  <div class="dropdown">
+                    <button
+                      type="button"
+                      class="btn p-0 dropdown-toggle hide-arrow"
+                      data-bs-toggle="dropdown"
+                    >
+                      <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                      <a
+                        class="dropdown-item"
+                        th:href="@{/admin/service/{itemId}/edit(itemId = ${item.id})}"
+                        ><i class="bx bx-edit-alt me-1"></i> Edit</a
+                      >
+                      <a
+                        class="dropdown-item"
+                        href="javascript:void(0);"
+                        th:onclick="'sendDeleteRequest(\'' + @{/admin/service/{itemId}(itemId = ${item.id})} + '\')'"
+                      >
+                        <i class="bx bx-trash me-1"></i> Delete
+                      </a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <script th:inline="javascript">
+        function sendDeleteRequest(path) {
+          var xhr = new XMLHttpRequest();
+          xhr.open("DELETE", path);
+          xhr.setRequestHeader("[(${_csrf.headerName})]", "[(${_csrf.token})]");
+          xhr.send();
+          xhr.onload = function () {
+            if (this.status == 204) {
+              location.reload(true);
+            }
+          };
+        }
+      </script>
+    </div>
+  </body>
+</html>

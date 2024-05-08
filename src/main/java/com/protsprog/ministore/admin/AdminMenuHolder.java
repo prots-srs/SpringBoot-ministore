@@ -28,24 +28,34 @@ public class AdminMenuHolder {
         activeChild = false;
 
         // loop items
-        link = ROOT_PATH + "/services";
+        link = ROOT_PATH + "/seo";
         active = link == activeLink;
 
         if (active) {
             activeChild = true;
         }
         contentMenu.add(
-                new AdminMenuItem(10, "Services", link,
+                new AdminMenuItem(5, "SEO", link,
                         "", active, null, false));
 
-        link = ROOT_PATH + "/products";
+        link = ROOT_PATH + "/service";
         active = link == activeLink;
 
         if (active) {
             activeChild = true;
         }
         contentMenu.add(
-                new AdminMenuItem(20, "Products", link,
+                new AdminMenuItem(10, "Service", link,
+                        "", active, null, false));
+
+        link = ROOT_PATH + "/product";
+        active = link == activeLink;
+
+        if (active) {
+            activeChild = true;
+        }
+        contentMenu.add(
+                new AdminMenuItem(20, "Product", link,
                         "", active, null, false));
 
         // define root item
