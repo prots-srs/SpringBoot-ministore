@@ -1,0 +1,51 @@
+<html dir="ltr" xmlns:th="https://www.thymeleaf.org" th:attr="lang=${language}">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+
+    <title th:text="#{page.localize.title}"></title>
+  </head>
+  <body>
+    <h1 th:text="#{page.localize.h1}"></h1>
+    <p>
+      <span th:text="#{page.localize.name}"></span>
+      <span th:text="${languageName}"></span>
+    </p>
+
+    <p>
+      <span th:text="#{lang.change}"></span>
+      <select
+        name="languageChanger"
+        onchange="LocalizeService.changeLanguage(event);"
+      >
+        <option
+          th:each="type : ${selectLanguages}"
+          th:value="${type}"
+          th:text="#{${'lang.' + type}}"
+          th:selected="${type==language}"
+        ></option>
+      </select>
+    </p>
+    <p>&nbsp;</p>
+    <p>
+      <span th:text="#{page.localize.number}"></span>
+      <span th:text="${number}"></span>
+    </p>
+    <p>
+      <span th:text="#{page.localize.price}"></span>
+      <span th:text="${price}"></span>
+    </p>
+    <p>
+      <span th:text="#{page.localize.date}"></span>
+      <span th:text="${date}"></span>
+    </p>
+    <p>
+      <span th:text="#{page.localize.time}"></span>
+      <span th:text="${time}"></span>
+    </p>
+  </body>
+  <script type="text/javascript" th:src="@{/js/localize.js}"></script>
+</html>
