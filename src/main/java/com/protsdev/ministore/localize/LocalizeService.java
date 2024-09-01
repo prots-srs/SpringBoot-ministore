@@ -17,7 +17,7 @@ public class LocalizeService {
         this.messageSource = messageSource;
     }
 
-    public String getLocalizedMessage(String translationKey) {
+    public String getMessage(String translationKey) {
         Locale locale = LocaleContextHolder.getLocale();
 
         String outputMessage = "";

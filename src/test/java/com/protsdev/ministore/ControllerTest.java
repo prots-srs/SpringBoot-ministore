@@ -17,6 +17,7 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,6 +34,12 @@ import com.protsdev.ministore.localize.LocalizeService;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ControllerTest {
+
+    @Value("${user.admin.name}")
+    private String adminName;
+
+    @Value("${user.admin.password}")
+    private String adminPassword;
 
     @Autowired
     private MockMvc mockMvc;
@@ -59,13 +66,13 @@ public class ControllerTest {
                 // .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().string(containsString(localizeService.getLocalizedMessage("page.mainpage.author"))));
+                        content().string(containsString(localizeService.getMessage("page.mainpage.author"))));
     }
 
     @Test
     void openPanelPage() throws Exception {
         mockMvc
-                .perform(formLogin("/login").user("admin").password("_admin_"))
+                .perform(formLogin("/login").user(adminName).password(adminPassword))
                 .andExpect(authenticated())
                 .andReturn();
     }

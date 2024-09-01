@@ -28,7 +28,7 @@ public class HttpRequestTest {
     void openingPublicPage() throws Exception {
         assertThat(this.restTemplate.getForObject("http://localhost:" + port,
                 String.class))
-                .contains(localizeService.getLocalizedMessage("page.mainpage.author"));
+                .contains(localizeService.getMessage("page.mainpage.author"));
     }
 
 }

@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,15 +27,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.protsdev.ministore.domen.MenuConfigurator;
+import com.protsdev.ministore.domen.PanelMenuService;
+import com.protsdev.ministore.dto.PanelMenu;
+import com.protsdev.ministore.dto.PublicMenu;
+import com.protsdev.ministore.localize.LocalizeService;
 import com.protsdev.ministore.models.IconClass;
 import com.protsdev.ministore.models.ProductEntity;
-import com.protsdev.ministore.models.ProductType;
-import com.protsdev.ministore.models.SEOs;
 import com.protsdev.ministore.models.ServiceItem;
+import com.protsdev.ministore.pageSeo.SeoEntity;
+import com.protsdev.ministore.pageSeo.SeoRepository;
 import com.protsdev.ministore.repositories.ProductRepository;
-import com.protsdev.ministore.repositories.SeoRepository;
 import com.protsdev.ministore.repositories.ServiceRepository;
-import com.protsdev.ministore.services.AdminMenuHolder;
 import com.protsdev.ministore.services.ImageService;
 
 /*
@@ -46,21 +51,17 @@ import com.protsdev.ministore.services.ImageService;
 @RequestMapping("/panel")
 public class PanelController {
 
-    private static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/public/content";
+    @Autowired
+    private LocalizeService localizeService;
 
-    // private final String siteUrl = "/panel";
-    // private final String sectionSeoUrl = "/seo";
-    // private final String sectionServiceUrl = "/service";
-    // private final String sectionProductUrl = "/product";
+    @Autowired
+    private PanelMenuService panelMenuService;
 
-    private final int pageSize = 5;
+    // private static String UPLOAD_DIRECTORY = System.getProperty("user.dir") +
+    // "/public/content";
 
     // @Autowired
     // private ServiceRepository serviceRepo;
-
-    @Autowired
-    private SeoRepository seoRepo;
-
     // @Autowired
     // private ProductRepository productRepo;
 
@@ -69,125 +70,17 @@ public class PanelController {
 
     @GetMapping
     public String dashboard(Model model) {
-        List<SEOs> seos = this.seoRepo.findByPath("/panel");
+        // title & menus
+        model.addAttribute("title", localizeService
+                .getMessage("page.panel.menu." + MenuConfigurator.PANEL_DASHBOARD.toString()));
 
-        model.addAttribute("seos", seos.size() > 0 ? seos.get(0) : new SEOs());
-        model.addAttribute("menu", AdminMenuHolder.getMenu("/panel"));
+        model.addAttribute("menu", panelMenuService.getLeftMenu(MenuConfigurator.PANEL_DASHBOARD.getLink()));
 
+        /*
+         * TODO something
+         */
         return "panel-dashboard";
     }
-
-    // SEOs
-    // @GetMapping(sectionSeoUrl)
-    // public String listSEO(@RequestParam(defaultValue = "1") int page,
-    // @RequestParam(defaultValue = "") String search,
-    // Model model) {
-
-    // List<SEOs> seos = this.seoRepo.findByPath(siteUrl + sectionSeoUrl);
-    // model.addAttribute("seos", seos.size() > 0 ? seos.get(0) : new SEOs());
-
-    // model.addAttribute("menu", AdminMenuHolder.getMenu(siteUrl + sectionSeoUrl));
-    // model.addAttribute("search", siteUrl + sectionSeoUrl);
-    // model.addAttribute("composeLink", siteUrl + sectionSeoUrl + "/create");
-
-    // Pageable pageable = PageRequest.of(page - 1, this.pageSize);
-
-    // if (search.length() > 0) {
-    // List<SEOs> list = this.seoRepo.findByPathContaining(search);
-    // model.addAttribute("list", list);
-    // model.addAttribute("pageSize", list.size());
-    // model.addAttribute("totalItems", list.size());
-
-    // } else {
-    // Page<SEOs> pList = this.seoRepo.findAll(pageable);
-    // model.addAttribute("list", pList.getContent());
-
-    // model.addAttribute("currentPage", page);
-    // model.addAttribute("totalPages", pList.getTotalPages());
-    // model.addAttribute("pageSize", this.pageSize);
-    // model.addAttribute("totalItems", pList.getTotalElements());
-    // }
-
-    // return "admin-list-seo";
-    // }
-
-    // @GetMapping(sectionSeoUrl + "/create")
-    // public String createSEO(Model model) {
-    // List<SEOs> seos = this.seoRepo.findByPath(siteUrl + sectionSeoUrl +
-    // "/create");
-    // model.addAttribute("seos", seos.size() > 0 ? seos.get(0) : new SEOs());
-
-    // model.addAttribute("item", new SEOs());
-
-    // model.addAttribute("menu", AdminMenuHolder.getMenu(siteUrl + sectionSeoUrl));
-
-    // return "admin-edit-seo";
-    // }
-
-    // @PostMapping(sectionSeoUrl)
-    // private String processCreateSEO(SEOs item, BindingResult result,
-    // RedirectAttributes redirectAttributes) {
-
-    // if (result.hasErrors()) {
-    // redirectAttributes.addFlashAttribute("error",
-    // "There was an error in creating");
-    // return "admin-edit-seo";
-    // }
-
-    // this.seoRepo.save(item);
-    // redirectAttributes.addFlashAttribute("message", "New item Created");
-
-    // return "redirect:" + siteUrl + sectionSeoUrl;
-    // }
-
-    // @DeleteMapping(sectionSeoUrl + "/{id}")
-    // private ResponseEntity<Void> deleteSEO(@PathVariable Long id) {
-    // if (this.seoRepo.existsById(id)) {
-    // this.seoRepo.deleteById(id);
-    // return ResponseEntity.noContent().build();
-    // }
-
-    // return ResponseEntity.notFound().build();
-    // }
-
-    // @GetMapping(sectionSeoUrl + "/{id}/edit")
-    // public String updateSEO(@PathVariable Long id, Model model) {
-    // List<SEOs> seos = this.seoRepo.findByPath(siteUrl + sectionSeoUrl + "/edit");
-    // model.addAttribute("seos", seos.size() > 0 ? seos.get(0) : new SEOs());
-
-    // model.addAttribute("menu", AdminMenuHolder.getMenu(siteUrl + sectionSeoUrl));
-
-    // SEOs item;
-
-    // if (this.seoRepo.existsById(id)) {
-    // item = this.seoRepo.findById(id).get();
-    // model.addAttribute("id", id);
-    // } else {
-    // item = new SEOs();
-    // }
-
-    // model.addAttribute("item", item);
-    // return "admin-edit-seo";
-    // }
-
-    // @PostMapping(sectionSeoUrl + "/{id}/edit")
-    // public String processUpdateSEO(SEOs item, BindingResult result,
-    // @PathVariable("id") Long id,
-    // RedirectAttributes redirectAttributes) {
-
-    // if (result.hasErrors()) {
-    // redirectAttributes.addFlashAttribute("error",
-    // "There was an error in updating.");
-    // return "admin-edit-seo";
-    // }
-
-    // item.setId(id);
-    // this.seoRepo.save(item);
-
-    // redirectAttributes.addFlashAttribute("message", "Values Updated");
-
-    // return "redirect:" + siteUrl + sectionSeoUrl;
-    // }
 
     // // SERVICES
 

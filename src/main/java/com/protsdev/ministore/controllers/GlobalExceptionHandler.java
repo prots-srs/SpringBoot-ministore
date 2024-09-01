@@ -2,11 +2,13 @@ package com.protsdev.ministore.controllers;
 
 import java.net.http.HttpRequest;
 import java.util.Locale;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.protsdev.ministore.domen.MenuConfigurator;
+import com.protsdev.ministore.dto.PanelMenu;
 import com.protsdev.ministore.localize.LocalizeService;
 
 @ControllerAdvice
@@ -26,7 +30,7 @@ public class GlobalExceptionHandler {
     // LoggerFactory.getLogger(ErrorControllerAdvice.class);
 
     @Autowired
-    private LocalizeService LocalizeService;
+    private LocalizeService localizeService;
 
     // @ExceptionHandler(Throwable.class)
     @ExceptionHandler(Exception.class)
@@ -54,7 +58,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String noFoundError(final Model model) {
-        String message = LocalizeService.getLocalizedMessage("errors.notfound");
+        String message = localizeService.getMessage("errors.notfound");
         model.addAttribute("message", message);
         return "error";
     }

@@ -95,7 +95,7 @@
     </section>
     <section
       class="product-store position-relative padding-large _no-padding-top"
-      th:if="${productMobile.size() > 0}"
+      _th:if="${productMobile.size() > 0}"
     >
       <div class="container">
         <div class="row">
@@ -113,7 +113,7 @@
             </div>
           </div>
           <div
-            th:replace="~{components/goods-list::#goods-list(productMobile)}"
+            _th:replace="~{components/goods-list::#goods-list(productMobile)}"
           ></div>
         </div>
       </div>
@@ -122,7 +122,7 @@
 
     <section
       class="product-store padding-large position-relative"
-      th:if="${productWatch.size() > 0}"
+      _th:if="${productWatch.size() > 0}"
     >
       <div class="container">
         <div class="row">
@@ -140,7 +140,7 @@
             </div>
           </div>
           <div
-            th:replace="~{components/goods-list::#goods-list(productWatch)}"
+            _th:replace="~{components/goods-list::#goods-list(productWatch)}"
           ></div>
         </div>
       </div>

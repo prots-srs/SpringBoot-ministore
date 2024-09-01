@@ -37,7 +37,7 @@ public class LocalizeController {
     public String getMethodName(Model model) {
         Locale locale = LocaleContextHolder.getLocale();
         model.addAttribute("language", locale.getLanguage());
-        model.addAttribute("languageName", localizeService.getLocalizedMessage("lang." + locale.getLanguage()));
+        model.addAttribute("languageName", localizeService.getMessage("lang." + locale.getLanguage()));
         model.addAttribute("selectLanguages", localizeService.getLanguages());
 
         var number = NumberFormat.getNumberInstance(locale).format(1234567.89);

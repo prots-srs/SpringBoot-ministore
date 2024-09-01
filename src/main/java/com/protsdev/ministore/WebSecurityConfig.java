@@ -76,7 +76,7 @@ class WebSecurityConfig {
                         .permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .csrf(Customizer.withDefaults())
-                .securityMatcher("/h2-console/**", "/actuator/**", "/panel/**", "/login");
+                .securityMatcher("/h2-console/**", "/actuator/**", "/panel/**", "/login", "/logout");
 
         return http.build();
     }

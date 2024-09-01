@@ -18,9 +18,9 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title th:text="${seos.title}"></title>
-    <meta name="keywords" content="" th:content="${seos.keywords}" />
-    <meta name="description" content="" th:content="${seos.description}" />
+    <title th:text="${title}"></title>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}" />
@@ -164,10 +164,7 @@
           <div class="menu-inner-shadow"></div>
 
           <ul class="menu-inner py-1">
-            <li
-              th:each="menuItem : ${menu}"
-              th:class="'menu-item ' + (${menuItem.active}? 'active': '') + ( ${menuItem.activeChild} ? 'open':'')"
-            >
+            <li th:each="menuItem : ${menu}" class="menu-item open">
               <a
                 th:href="${menuItem.link.length() > 0} ? ${menuItem.link} : 'javascript:void(0);'"
                 th:class="'menu-link ' + (${menuItem.children != null} ? 'menu-toggle' : '')"
@@ -241,8 +238,8 @@
               id="navbar-collapse"
             >
               <!-- Search -->
-              <div class="navbar-nav align-items-center" th:if="${search}">
-                <form method="GET" th:action="@{${search}}">
+              <div class="navbar-nav align-items-center" th:if="${mappingLink}">
+                <form method="GET" th:action="@{${mappingLink}}">
                   <div class="nav-item d-flex align-items-center">
                     <i class="bx bx-search fs-4 lh-0"></i>
                     <input
@@ -250,10 +247,13 @@
                       class="form-control border-0 shadow-none"
                       name="search"
                       th:value="${param.search}"
-                      placeholder="Search..."
-                      aria-label="Search..."
+                      th:placeholder="#{page.panel.header.bar.search.placeholder}"
+                      th:aria-label="#{page.panel.header.bar.search.placeholder}"
                     />
-                    <button class="btn btn-outline-primary">Search</button>
+                    <button
+                      class="btn btn-outline-primary"
+                      th:text="#{page.panel.header.bar.search}"
+                    ></button>
                   </div>
                 </form>
               </div>
@@ -268,7 +268,7 @@
                     th:href="${composeLink}"
                   >
                     <span class="tf-icons bx bx-add-to-queue"></span>&nbsp;
-                    Compose
+                    <span th:text="#{page.panel.header.bar.compose}"></span>
                   </a>
                 </li>
 
