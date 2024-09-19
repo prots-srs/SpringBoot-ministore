@@ -7,8 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.Optional;
 import java.time.LocalDateTime;
@@ -19,31 +17,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.protsdev.ministore.models.FileUpload;
-import com.protsdev.ministore.repositories.FileUploadRepository;
+import com.protsdev.ministore.localize.LocalizeService;
 
 @Service
 public class FileSystemStorageService implements StorageService {
 
-    private Map<String, String> messages = new HashMap<>();
+    private LocalizeService localize;
 
     private final Path location;
     private final FileUploadRepository fileUploadRepository;
 
     public FileSystemStorageService(
             FileUploadRepository fileUploadRepository,
-            StorageProperties properties) {
+            StorageProperties properties,
+            LocalizeService lS) {
 
-        messages.put("error_dir_location", "File upload location can not be Empty.");
-        messages.put("error_dir_create", "Could not initialize storage");
-        messages.put("error_store_file_empty", "Failed to store empty file.");
-        messages.put("error_store_file", "Failed to store file.");
-        messages.put("error_store_file_outside", "Cannot store file outside current directory.");
-        // messages.put("error_store_file_read", "Failed to read stored files");
-        messages.put("error_read_file", "Could not read file: ");
+        localize = lS;
 
         if (properties.getLocation().trim().length() == 0) {
-            throw new StorageException(messages.get("error_dir_location"));
+            throw new StorageException(localize.getMessage("storage.file.error.dir.location"));
         }
 
         this.fileUploadRepository = fileUploadRepository;
@@ -55,15 +47,15 @@ public class FileSystemStorageService implements StorageService {
         try {
             Files.createDirectories(location);
         } catch (IOException e) {
-            throw new StorageException(messages.get("error_dir_create"), e);
+            throw new StorageException(localize.getMessage("storage.file.error.dir.create"), e);
         }
     }
 
     @Override
-    public FileUpload store(MultipartFile file) {
+    public FileUploadEntity store(MultipartFile file) {
         try {
             if (file.isEmpty()) {
-                throw new StorageException(messages.get("error_store_file_empty"));
+                throw new StorageException(localize.getMessage("storage.file.error.file.empty"));
             }
 
             String uniqueFileName = UUID.randomUUID().toString() + "-" + LocalDateTime.now().getNano();
@@ -78,14 +70,14 @@ public class FileSystemStorageService implements StorageService {
 
             // This is a security check
             if (!destinationFile.getParent().equals(location.toAbsolutePath())) {
-                throw new StorageException(messages.get("error_store_file_outside"));
+                throw new StorageException(localize.getMessage("storage.file.error.file.outside"));
             }
 
             // save
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
 
-                var fileEntity = new FileUpload();
+                var fileEntity = new FileUploadEntity();
                 fileEntity.setOriginalName(file.getOriginalFilename());
                 fileEntity.setFileType(file.getContentType());
                 fileEntity.setFileSize(file.getSize());
@@ -95,7 +87,7 @@ public class FileSystemStorageService implements StorageService {
                 return savedFile;
             }
         } catch (IOException e) {
-            throw new StorageException(messages.get("error_store_file"), e);
+            throw new StorageException(localize.getMessage("storage.file.error.store.file"), e);
         }
 
     }
@@ -111,17 +103,6 @@ public class FileSystemStorageService implements StorageService {
         return location.resolve(filename);
     }
 
-    // @Override
-    // public Stream<Path> loadAll() {
-    // try {
-    // return Files.walk(this.rootLocation, 1)
-    // .filter(path -> !path.equals(this.rootLocation))
-    // .map(this.rootLocation::relativize);
-    // } catch (IOException e) {
-    // throw new StorageException(messages.get("error_store_file_read"), e);
-    // }
-    // }
-
     @Override
     public Resource loadAsResource(String filename) {
         try {
@@ -130,17 +111,44 @@ public class FileSystemStorageService implements StorageService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new StorageFileNotFoundException(messages.get("error_read_file") + filename);
+                throw new StorageFileNotFoundException(localize.getMessage("storage.file.error.read.file") + filename);
 
             }
         } catch (MalformedURLException e) {
-            throw new StorageFileNotFoundException(messages.get("error_read_file") + filename, e);
+            throw new StorageFileNotFoundException(localize.getMessage("storage.file.error.read.file") + filename, e);
         }
     }
 
     @Override
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(location.toFile());
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        if (id == null || id.equals(Long.valueOf(0))) {
+            return;
+        }
+
+        Optional<FileUploadEntity> entityOp = fileUploadRepository.findById(id);
+        if (entityOp.isPresent()) {
+
+            Path file = load(entityOp.get().getSavedName());
+            try {
+                Files.delete(file);
+                fileUploadRepository.deleteById(id);
+            } catch (Exception e) {
+                throw new StorageException(localize.getMessage("storage.file.error.delete.file"), e);
+            }
+        }
+    }
+
+    @Override
+    public Optional<FileUploadEntity> getFileEntityById(Long id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        return fileUploadRepository.findById(id);
     }
 
 }

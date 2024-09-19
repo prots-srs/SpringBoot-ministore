@@ -79,38 +79,78 @@
             <thead>
               <tr>
                 <th
-                  th:each="field : ${formFields}"
-                  th:text="${field.label}"
+                  th:each="header : ${headers}"
+                  th:text="#{'page.panel.list.headers.' + ${header}}"
                 ></th>
-                <th th:text="#{page.panel.list.headers.actions}"></th>
               </tr>
             </thead>
             <tbody>
               <tr th:each="row : ${list.list}">
-                <td th:each="field : ${formFields}">
-                  [[${row['__${field.name}__']}]]
-                </td>
-                <td>
-                  <div class="dropdown">
-                    <button
-                      type="button"
-                      class="btn p-0 dropdown-toggle hide-arrow"
-                      data-bs-toggle="dropdown"
-                    >
-                      <i class="bx bx-dots-vertical-rounded"></i>
-                    </button>
-                    <div class="dropdown-menu">
-                      <a class="dropdown-item" th:href="@{${row.editLink}}"
-                        ><i class="bx bx-edit-alt me-1"></i> [[#{actions.edit}]]
-                      </a>
-                      <a
-                        class="dropdown-item"
-                        href="javascript:void(0);"
-                        th:onclick="'sendDeleteRequest(\'' + @{{link}(link = ${row.deleteLink})} + '\')'"
+                <td th:each="header : ${headers}" th:with="data=${row[header]}">
+                  <span
+                    th:if="${header == 'active'}"
+                    th:class="${data}? 'badge me-1 bg-label-primary' : 'badge me-1 bg-label-secondary'"
+                    th:text="${data}? #{status.active} : #{status.deactived}"
+                  ></span>
+
+                  <div class="icon-box" th:if="${header == 'iconClass'}">
+                    <div class="icon-box-icon">
+                      <svg th:class="${data.getIco()}">
+                        <use th:xlink:href="'#' + ${data.getIco()}"></use>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div
+                    th:if="${header == 'productType'}"
+                    th:text="#{'enum.product.' + ${data}}"
+                    th:remove="tag"
+                  ></div>
+
+                  <div th:if="${header == 'picture'}" th:remove="tag">
+                    <img
+                      th:if="${not data.isEmpty()}"
+                      class="img-thumbnail"
+                      th:src="@{'/content/' + ${data}}"
+                      style="max-width: 100px; max-height: 100px"
+                    />
+                  </div>
+
+                  <div
+                    th:if="${header != 'iconClass' && header != 'active' && header != 'productType'
+                    && header != 'picture' && header != 'actions'}"
+                    th:remove="tag"
+                    th:text="${data}"
+                  ></div>
+                  <div th:if="${header == 'actions'}" th:remove="tag">
+                    <div class="dropdown">
+                      <button
+                        type="button"
+                        class="btn p-0 dropdown-toggle hide-arrow"
+                        data-bs-toggle="dropdown"
                       >
-                        <i class="bx bx-trash me-1"></i>
-                        [[#{actions.delete}]]
-                      </a>
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                      </button>
+                      <div class="dropdown-menu">
+                        <div th:each="action : ${data.keySet}" th:remove="tag">
+                          <a
+                            class="dropdown-item"
+                            th:if="${action == 'edit'}"
+                            th:href="@{${data.get(action)}}"
+                            ><i class="bx bx-edit-alt me-1"></i>
+                            [[#{'actions.' + ${action}}]]
+                          </a>
+                          <a
+                            class="dropdown-item"
+                            th:if="${action == 'delete'}"
+                            href="javascript:void(0);"
+                            th:onclick="'sendDeleteRequest(\'' + @{{link}(link = ${data.get(action)})} + '\')'"
+                          >
+                            <i class="bx bx-trash me-1"></i>
+                            [[#{'actions.' + ${action}}]]
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </td>

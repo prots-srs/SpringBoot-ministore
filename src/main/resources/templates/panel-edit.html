@@ -15,45 +15,123 @@
               <div class="card-body">
                 <form
                   method="post"
+                  enctype="multipart/form-data"
                   th:object="${item}"
                   th:action="${formAction}"
                 >
-                  <div class="row mb-3" th:each="field: ${formFields}">
-                    <label
-                      class="col-sm-2 col-form-label"
-                      th:for="${field.name}"
-                      th:text="${field.label}"
-                    ></label>
-                    <div class="col-sm-10" th:if="${field.type == 'text'}">
+                  <div th:each="field: ${formFields}" th:remove="tag">
+                    <div th:if="${field.type == 'hidden'}" th:remove="tag">
                       <input
-                        type="text"
+                        th:type="${field.type}"
                         th:field="*{__${field.name}__}"
-                        class="form-control"
-                        th:errorclass="is-invalid"
-                        th:placeholder="${field.label}"
-                        th:required="${field.required == true}? 'required'"
                       />
-                      <div
-                        class="invalid-feedback"
-                        th:if="${#fields.hasErrors('__${field.name}__')}"
-                        th:errors="*{__${field.name}__}"
-                      ></div>
-                    </div>
 
-                    <div class="col-sm-10" th:if="${field.type == 'textarea'}">
-                      <textarea
-                        th:field="*{__${field.name}__}"
-                        class="form-control"
-                        th:errorclass="is-invalid"
-                        th:placeholder="${field.label}"
-                        th:aria-label="${field.label}"
-                        th:required="${field.required == true}? 'required'"
-                      ></textarea>
-                      <div
-                        class="invalid-feedback"
-                        th:if="${#fields.hasErrors('__${field.name}__')}"
-                        th:errors="*{__${field.name}__}"
-                      ></div>
+                      <div th:if="${fileSaved != null}" th:remove="tag">
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label"></label>
+                          <div class="col-sm-10">
+                            <img
+                              class="img-thumbnail"
+                              th:src="@{'/content/' + ${fileSaved.uri}}"
+                              th:alt="${fileSaved.alt}"
+                              style="max-width: 200px; max-height: 200px"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div th:if="${field.type != 'hidden'}" th:remove="tag">
+                      <div class="row mb-3">
+                        <label
+                          th:if="${field.type != 'checkbox'}"
+                          class="col-sm-2 col-form-label"
+                          th:for="${field.name}"
+                          th:text="${field.label}"
+                        ></label>
+                        <label
+                          th:if="${field.type == 'checkbox'}"
+                          class="col-sm-2 col-form-label"
+                          th:for="${field.name} + '1'"
+                          th:text="${field.label}"
+                        ></label>
+                        <div class="col-sm-10">
+                          <div th:if="${field.type == 'text'}" th:remove="tag">
+                            <input
+                              th:type="${field.type}"
+                              th:field="*{__${field.name}__}"
+                              class="form-control"
+                              th:errorclass="is-invalid"
+                              th:placeholder="${field.label}"
+                              th:required="${field.required == true}? 'required'"
+                            />
+                          </div>
+                          <div
+                            th:if="${field.type == 'textarea'}"
+                            th:remove="tag"
+                          >
+                            <textarea
+                              th:field="*{__${field.name}__}"
+                              class="form-control"
+                              th:errorclass="is-invalid"
+                              th:placeholder="${field.label}"
+                              th:aria-label="${field.label}"
+                              th:required="${field.required == true}? 'required'"
+                            ></textarea>
+                          </div>
+                          <div
+                            th:if="${field.type == 'checkbox'}"
+                            th:remove="tag"
+                          >
+                            <input
+                              th:type="${field.type}"
+                              th:field="*{__${field.name}__}"
+                              class="form-check-input"
+                              th:errorclass="is-invalid"
+                              th:required="${field.required == true}? 'required'"
+                            />
+                          </div>
+                          <div
+                            th:if="${field.type == 'select'}"
+                            th:remove="tag"
+                          >
+                            <select
+                              class="form-select"
+                              th:errorclass="is-invalid"
+                              th:aria-label="#{'select.prompt.' + __${field.name}__}"
+                              th:field="*{__${field.name}__}"
+                              th:required="${field.required == true}? 'required'"
+                            >
+                              <option
+                                value=""
+                                th:text="#{'select.prompt.' + __${field.name}__}"
+                              ></option>
+                              <option
+                                th:each="option : ${field.options}"
+                                th:value="${option.key}"
+                                th:text="${option.value}"
+                              ></option>
+                            </select>
+                          </div>
+
+                          <div th:if="${field.type == 'file'}" th:remove="tag">
+                            <input
+                              th:type="${field.type}"
+                              th:field="*{__${field.name}__}"
+                              class="form-control"
+                              th:errorclass="is-invalid"
+                              th:placeholder="${field.label}"
+                              th:required="${field.required == true && item.file == null}? 'required'"
+                              accept="image/*"
+                            />
+                          </div>
+
+                          <div
+                            class="invalid-feedback"
+                            th:if="${#fields.hasErrors('__${field.name}__')}"
+                            th:errors="*{__${field.name}__}"
+                          ></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="row justify-content-end">

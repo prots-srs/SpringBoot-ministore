@@ -1,5 +1,8 @@
 package com.protsdev.ministore;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
 import org.springframework.security.config.Customizer;
 
 import jakarta.servlet.DispatcherType;
@@ -47,7 +51,6 @@ class WebSecurityConfig {
 
     @Bean
     SecurityFilterChain web(HttpSecurity http) throws Exception {
-
         http
                 .authorizeHttpRequests((requests) -> requests
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()

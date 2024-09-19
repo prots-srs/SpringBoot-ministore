@@ -1,31 +1,32 @@
-<div class="swiper product-swiper|product-watch-swiper" id="goods-list">
+<div class="swiper product-swiper" th:fragment="goods-list(products)">
+  <!-- product-watch-swiper -->
+
   <div class="swiper-wrapper">
-    <div class="swiper-slide" th:each="items: ${productMobile}">
+    <div class="swiper-slide" th:each="item: ${products}">
       <div class="product-card position-relative">
         <div class="image-holder">
           <img
-            th:src="@{'/content/' + ${items.picture}}"
-            alt="product-item"
+            th:src="@{'/content/' + ${item.picture}}"
+            th:alt="${item.pictureAlt}"
             class="img-fluid"
           />
         </div>
-        <!-- <div class="cart-concern position-absolute">
-              <div class="cart-button d-flex">
-                <a href="#" class="btn btn-medium btn-black"
-                  >Add to Cart<svg class="cart-outline">
-                    <use xlink:href="#cart-outline"></use></svg
-                ></a>
-              </div>
-            </div> -->
+
+        <div class="cart-concern position-absolute">
+          <div class="cart-button d-flex">
+            <a href="#" class="btn btn-medium btn-black"
+              >Add to Cart<svg class="cart-outline">
+                <use xlink:href="#cart-outline"></use></svg
+            ></a>
+          </div>
+        </div>
         <div
           class="card-detail d-flex justify-content-between align-items-baseline pt-3"
         >
           <h3 class="card-title text-uppercase">
-            <a href="javascript:void(0);" th:text="${items.productName}"></a>
+            <a href="javascript:void(0);" th:text="${item.name}"></a>
           </h3>
-          <span class="item-price text-primary"
-            >$[[${items.productPrice}]]</span
-          >
+          <span class="item-price text-primary">$[[${item.price}]]</span>
         </div>
       </div>
     </div>

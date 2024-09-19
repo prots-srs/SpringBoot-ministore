@@ -36,6 +36,7 @@ RUN java -Djarmode=layertools -jar target/app.jar extract --destination target/e
 
 FROM extract AS development
 WORKDIR /build
+# we will do thomething here
 COPY --chmod=0755 ./uploads uploads/
 COPY --chmod=0755 ./config config/
 RUN cp -r /build/target/extracted/dependencies/. ./
@@ -56,6 +57,7 @@ RUN adduser \
     --uid "${UID}" \
     appuser
 USER appuser
+# we will do thomething here
 COPY --chmod=0755 --chown=appuser ./uploads uploads/
 COPY --chmod=0755 --chown=appuser ./config config/
 COPY --from=extract build/target/extracted/dependencies/ ./

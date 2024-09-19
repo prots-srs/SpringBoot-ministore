@@ -68,8 +68,9 @@
     </section>
 
     <section
+      id="company-services"
       class="padding-large no-padding-bottom"
-      th:if="${services.size() > 0}"
+      th:if="${services != null}"
     >
       <div class="container">
         <div class="row justify-content-center">
@@ -91,11 +92,11 @@
           </div>
         </div>
       </div>
-      <div th:replace="~{components/company-service}"></div>
     </section>
     <section
+      id="mobile-products"
       class="product-store position-relative padding-large _no-padding-top"
-      _th:if="${productMobile.size() > 0}"
+      th:if="${mobiles.size() > 0}"
     >
       <div class="container">
         <div class="row">
@@ -113,7 +114,7 @@
             </div>
           </div>
           <div
-            _th:replace="~{components/goods-list::#goods-list(productMobile)}"
+            th:replace="~{components/goods-list::goods-list(${mobiles})}"
           ></div>
         </div>
       </div>
@@ -121,8 +122,9 @@
     </section>
 
     <section
+      id="smart-watches"
       class="product-store padding-large position-relative"
-      _th:if="${productWatch.size() > 0}"
+      th:if="${watches.size() > 0}"
     >
       <div class="container">
         <div class="row">
@@ -140,7 +142,7 @@
             </div>
           </div>
           <div
-            _th:replace="~{components/goods-list::#goods-list(productWatch)}"
+            th:replace="~{components/goods-list::goods-list(${watches})}"
           ></div>
         </div>
       </div>
