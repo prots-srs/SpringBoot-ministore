@@ -2,7 +2,6 @@ package com.protsdev.ministore.pagePanelProduct;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,26 +12,29 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.protsdev.ministore.dto.FileView;
 import com.protsdev.ministore.dto.PageProductView;
 import com.protsdev.ministore.enums.ProductTypes;
+import com.protsdev.ministore.enums.StorageModules;
+import com.protsdev.ministore.localize.LocalizeService;
 import com.protsdev.ministore.pageCommon.ListPagination;
 import com.protsdev.ministore.pageCommon.PanelService;
-import com.protsdev.ministore.pagePanelSeo.PanelSeoFormFields;
-import com.protsdev.ministore.pagePanelService.PanelServiceListHeaders;
-import com.protsdev.ministore.storage.FileUploadEntity;
+import com.protsdev.ministore.storage.StorageException;
 import com.protsdev.ministore.storage.StorageService;
 
 @Service
 public class PanelProductService implements PanelService<PanelProductFormFields> {
+
+    private LocalizeService localize;
+
     private ProductRepository repo;
     private StorageService storageService;
 
     private Map<Long, FileView> savedFiles = new HashMap<>();
 
-    public PanelProductService(ProductRepository repo, StorageService storageService) {
+    public PanelProductService(ProductRepository repo, StorageService storageService,
+            LocalizeService lS) {
+        localize = lS;
         this.repo = repo;
         this.storageService = storageService;
     }
@@ -86,7 +88,7 @@ public class PanelProductService implements PanelService<PanelProductFormFields>
         try {
             var entity = item.getAsTagretEntity();
             if (item.file() != null) {
-                var fileSaved = storageService.store(item.file());
+                var fileSaved = storageService.store(item.file(), StorageModules.PRODUCT);
                 if (fileSaved != null) {
                     entity.setPicture(fileSaved);
                 }
@@ -103,10 +105,9 @@ public class PanelProductService implements PanelService<PanelProductFormFields>
         Boolean deleteOldFile = false;
 
         try {
-            System.out.println("--> file: " + item.file());
             // save new picture from form
             if (item.file() != null) {
-                var fileSaved = storageService.store(item.file());
+                var fileSaved = storageService.store(item.file(), StorageModules.PRODUCT);
                 if (fileSaved != null) {
                     entity.setPicture(fileSaved);
                     deleteOldFile = true;
@@ -138,7 +139,9 @@ public class PanelProductService implements PanelService<PanelProductFormFields>
             try {
                 repo.deleteById(id);
             } catch (Exception e) {
-                return false;
+                // throw new
+                // StorageException(localize.getMessage("storage.file.error.delete.file"), e);
+                throw new StorageException("can't delete entity: ", e);
             }
         }
 

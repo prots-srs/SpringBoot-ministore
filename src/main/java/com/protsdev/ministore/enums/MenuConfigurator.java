@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum MenuConfigurator {
     PANEL_DASHBOARD("/panel", "bx-home-circle"),
     PANEL_CONTENT("", "bx-layout"),
+    PANEL_FILES("/panel/files", ""),
     PANEL_SEO("/panel/seo", ""),
     PANEL_SERVICE("/panel/service", ""),
     PANEL_PRODUCT("/panel/product", ""),

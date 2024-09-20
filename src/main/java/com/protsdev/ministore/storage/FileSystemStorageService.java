@@ -14,9 +14,10 @@ import java.time.LocalDateTime;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.protsdev.ministore.dto.ContentFile;
+import com.protsdev.ministore.enums.StorageModules;
 import com.protsdev.ministore.localize.LocalizeService;
 
 @Service
@@ -25,7 +26,7 @@ public class FileSystemStorageService implements StorageService {
     private LocalizeService localize;
 
     private final Path location;
-    private final FileUploadRepository fileUploadRepository;
+    private final FileUploadRepository repo;
 
     public FileSystemStorageService(
             FileUploadRepository fileUploadRepository,
@@ -38,38 +39,47 @@ public class FileSystemStorageService implements StorageService {
             throw new StorageException(localize.getMessage("storage.file.error.dir.location"));
         }
 
-        this.fileUploadRepository = fileUploadRepository;
+        this.repo = fileUploadRepository;
         location = Paths.get(properties.getLocation());
     }
 
+    // @Override
+    // public void init() {
+    // try {
+    // Files.createDirectories(location);
+    // } catch (IOException e) {
+    // throw new
+    // StorageException(localize.getMessage("storage.file.error.dir.create"), e);
+    // }
+    // }
+
     @Override
-    public void init() {
+    public void provideStorePlace(StorageModules module) {
         try {
-            Files.createDirectories(location);
+            Path moduleLocation = location.resolve(module.getDir());
+            Files.createDirectories(moduleLocation);
         } catch (IOException e) {
             throw new StorageException(localize.getMessage("storage.file.error.dir.create"), e);
         }
     }
 
     @Override
-    public FileUploadEntity store(MultipartFile file) {
+    public FileUploadEntity store(MultipartFile file, StorageModules module) {
+
+        provideStorePlace(module);
+
         try {
             if (file.isEmpty()) {
                 throw new StorageException(localize.getMessage("storage.file.error.file.empty"));
             }
 
-            String uniqueFileName = UUID.randomUUID().toString() + "-" + LocalDateTime.now().getNano();
-
-            var ext = getExtensionByStringHandling(file.getOriginalFilename());
-            if (ext.isPresent()) {
-                uniqueFileName = uniqueFileName + "." + ext.get();
-            }
-
-            Path destinationFile = location.resolve(Paths.get(uniqueFileName))
+            Path moduleLocation = location.resolve(module.getDir());
+            String uniqueFileName = getUniqueFileName(file.getOriginalFilename());
+            Path destinationFile = moduleLocation.resolve(Paths.get(uniqueFileName))
                     .normalize().toAbsolutePath();
 
             // This is a security check
-            if (!destinationFile.getParent().equals(location.toAbsolutePath())) {
+            if (!destinationFile.getParent().equals(moduleLocation.toAbsolutePath())) {
                 throw new StorageException(localize.getMessage("storage.file.error.file.outside"));
             }
 
@@ -82,9 +92,9 @@ public class FileSystemStorageService implements StorageService {
                 fileEntity.setFileType(file.getContentType());
                 fileEntity.setFileSize(file.getSize());
                 fileEntity.setSavedName(uniqueFileName);
+                fileEntity.setModule(module);
 
-                var savedFile = fileUploadRepository.save(fileEntity);
-                return savedFile;
+                return repo.save(fileEntity);
             }
         } catch (IOException e) {
             throw new StorageException(localize.getMessage("storage.file.error.store.file"), e);
@@ -98,31 +108,60 @@ public class FileSystemStorageService implements StorageService {
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 
-    @Override
-    public Path load(String filename) {
-        return location.resolve(filename);
-    }
+    private String getUniqueFileName(String originalFilename) {
+        String u = UUID.randomUUID().toString() + "-" + LocalDateTime.now().getNano();
 
-    @Override
-    public Resource loadAsResource(String filename) {
-        try {
-            Path file = load(filename);
-            Resource resource = new UrlResource(file.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            } else {
-                throw new StorageFileNotFoundException(localize.getMessage("storage.file.error.read.file") + filename);
-
-            }
-        } catch (MalformedURLException e) {
-            throw new StorageFileNotFoundException(localize.getMessage("storage.file.error.read.file") + filename, e);
+        var ext = getExtensionByStringHandling(originalFilename);
+        if (ext.isPresent()) {
+            u = u + "." + ext.get();
         }
+        return u;
     }
 
+    // @Override
+    // public Path load(String filename) {
+    // return location.resolve(filename);
+    // }
+
     @Override
-    public void deleteAll() {
-        FileSystemUtils.deleteRecursively(location.toFile());
+    public Optional<ContentFile> loadAsResource(String filename) {
+
+        var files = repo.findFirstBySavedName(filename);
+        Optional<ContentFile> result = Optional.empty();
+        if (files.size() > 0) {
+            var entity = files.get(0);
+            try {
+                StorageModules module = entity.getModule();
+                Path file;
+                if (module == null) {
+                    file = location.resolve(entity.getSavedName());
+                } else {
+                    file = location.resolve(module.getDir()).resolve(entity.getSavedName());
+                }
+
+                Resource resource = new UrlResource(file.toUri());
+                if (resource.exists() || resource.isReadable()) {
+                    result = Optional.of(new ContentFile(resource, entity.getFileType()));
+                    // } else {
+                    // throw new StorageFileNotFoundException(
+                    // localize.getMessage("storage.file.error.read.file") + filename);
+
+                }
+            } catch (MalformedURLException e) {
+                // throw new
+                // StorageFileNotFoundException(localize.getMessage("storage.file.error.read.file")
+                // + filename,
+                // e);
+            }
+        }
+
+        return result;
     }
+
+    // @Override
+    // public void deleteAll() {
+    // FileSystemUtils.deleteRecursively(location.toFile());
+    // }
 
     @Override
     public void deleteById(Long id) {
@@ -130,16 +169,25 @@ public class FileSystemStorageService implements StorageService {
             return;
         }
 
-        Optional<FileUploadEntity> entityOp = fileUploadRepository.findById(id);
+        Optional<FileUploadEntity> entityOp = repo.findById(id);
         if (entityOp.isPresent()) {
 
-            Path file = load(entityOp.get().getSavedName());
+            StorageModules module = entityOp.get().getModule();
+
+            Path file;
+            if (module == null) {
+                file = location.resolve(entityOp.get().getSavedName());
+            } else {
+                file = location.resolve(module.getDir()).resolve(entityOp.get().getSavedName());
+            }
+
             try {
-                Files.delete(file);
-                fileUploadRepository.deleteById(id);
+                repo.deleteById(id);
+                Files.deleteIfExists(file);
             } catch (Exception e) {
                 throw new StorageException(localize.getMessage("storage.file.error.delete.file"), e);
             }
+
         }
     }
 
@@ -148,7 +196,7 @@ public class FileSystemStorageService implements StorageService {
         if (id == null) {
             return Optional.empty();
         }
-        return fileUploadRepository.findById(id);
+        return repo.findById(id);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.protsdev.ministore.storage;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -7,11 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.protsdev.ministore.dto.ContentFile;
+import com.protsdev.ministore.enums.StorageModules;
+
 @Controller
-@RequestMapping
 public class UploadedContentController {
 
     @Autowired
@@ -20,9 +23,9 @@ public class UploadedContentController {
     @GetMapping("/content/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        Resource file = storageService.loadAsResource(filename);
+        Optional<ContentFile> file = storageService.loadAsResource(filename);
 
-        if (file == null) {
+        if (!file.isPresent()) {
             return ResponseEntity.notFound().build();
         }
 
@@ -32,8 +35,8 @@ public class UploadedContentController {
 
         // show
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
-                .body(file);
+                .header(HttpHeaders.CONTENT_TYPE, file.get().contentType())
+                .body(file.get().file());
     }
 
 }

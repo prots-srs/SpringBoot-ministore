@@ -43,8 +43,17 @@ public class PanelMenuService {
     private TreeSet<PanelMenuItem> getContentMenu(String activeLink) {
         TreeSet<PanelMenuItem> menu = new TreeSet<>();
         activeChild = false;
+        // files
+        menu.add(new PanelMenuItem(3,
+                localizeService
+                        .getMessage("page.panel.menu." + MenuConfigurator.PANEL_FILES.toString()),
+                MenuConfigurator.PANEL_FILES.getLink(),
+                MenuConfigurator.PANEL_FILES.getIco(),
+                MenuConfigurator.PANEL_FILES.getLink() == activeLink, null, false));
+        if (MenuConfigurator.PANEL_FILES.getLink() == activeLink)
+            activeChild = true;
         // seo
-        menu.add(new PanelMenuItem(5,
+        menu.add(new PanelMenuItem(10,
                 localizeService
                         .getMessage("page.panel.menu." + MenuConfigurator.PANEL_SEO.toString()),
                 MenuConfigurator.PANEL_SEO.getLink(),
@@ -53,7 +62,7 @@ public class PanelMenuService {
         if (MenuConfigurator.PANEL_SEO.getLink() == activeLink)
             activeChild = true;
         // service
-        menu.add(new PanelMenuItem(10,
+        menu.add(new PanelMenuItem(20,
                 localizeService
                         .getMessage("page.panel.menu." + MenuConfigurator.PANEL_SERVICE.toString()),
                 MenuConfigurator.PANEL_SERVICE.getLink(),
@@ -62,7 +71,7 @@ public class PanelMenuService {
         if (MenuConfigurator.PANEL_SEO.getLink() == activeLink)
             activeChild = true;
         // products
-        menu.add(new PanelMenuItem(20,
+        menu.add(new PanelMenuItem(30,
                 localizeService
                         .getMessage("page.panel.menu." + MenuConfigurator.PANEL_PRODUCT.toString()),
                 MenuConfigurator.PANEL_PRODUCT.getLink(),

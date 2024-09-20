@@ -9,5 +9,5 @@ import lombok.Setter;
 @ConfigurationProperties("storage")
 public class StorageProperties {
 
-    private String location;// = "uploads";
+    private String location;
 }

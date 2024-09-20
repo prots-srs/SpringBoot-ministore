@@ -3,22 +3,23 @@ package com.protsdev.ministore.storage;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
-// import java.util.stream.Stream;
+import com.protsdev.ministore.dto.ContentFile;
+import com.protsdev.ministore.enums.StorageModules;
+
 import java.util.Optional;
 
 public interface StorageService {
-    void init();
+    // void init();
+    // void deleteAll();
+    // Path load(String filename, StorageModules module);
 
-    void deleteAll();
+    void provideStorePlace(StorageModules module);
+
+    FileUploadEntity store(MultipartFile file, StorageModules module);
+
+    Optional<ContentFile> loadAsResource(String filename);
 
     void deleteById(Long id);
-
-    FileUploadEntity store(MultipartFile file);
-
-    Path load(String filename);
-
-    Resource loadAsResource(String filename);
 
     Optional<FileUploadEntity> getFileEntityById(Long id);
 }

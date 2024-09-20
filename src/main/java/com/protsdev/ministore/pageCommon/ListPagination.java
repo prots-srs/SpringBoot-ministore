@@ -10,6 +10,6 @@ public record ListPagination(
         Integer pageSize) {
 
     public static int getPageSize() {
-        return 5;
+        return 20;
     }
 }

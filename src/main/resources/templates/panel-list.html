@@ -14,7 +14,7 @@
             ></div>
           </div>
 
-          <table class="table">
+          <table class="table" th:if="${list}">
             <caption class="ms-4" th:if="${list.totalPages > 1}">
               <nav aria-label="#{pagination.label.area}">
                 <ul class="pagination">
@@ -116,9 +116,29 @@
                     />
                   </div>
 
+                  <div th:if="${header == 'savedName'}" th:remove="tag">
+                    <div
+                      th:if="${row['fileType'] == 'image/jpeg'}"
+                      th:remove="tag"
+                    >
+                      <img
+                        th:if="${not data.isEmpty()}"
+                        class="img-thumbnail"
+                        th:src="@{'/content/' + ${data}}"
+                        th:alt="${data}"
+                        style="max-width: 100px; max-height: 100px"
+                      />
+                    </div>
+                    <div
+                      th:if="${row['fileType'] != 'image/jpeg'}"
+                      th:text="${data}"
+                      th:remove="tag"
+                    ></div>
+                  </div>
+
                   <div
                     th:if="${header != 'iconClass' && header != 'active' && header != 'productType'
-                    && header != 'picture' && header != 'actions'}"
+                    && header != 'picture' && header != 'actions' && header != 'savedName'}"
                     th:remove="tag"
                     th:text="${data}"
                   ></div>

@@ -1,11 +1,10 @@
 package com.protsdev.ministore.storage;
 
+import com.protsdev.ministore.enums.StorageModules;
 import com.protsdev.ministore.pageCommon.BaseEntity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,14 +14,11 @@ import lombok.Setter;
 @Getter
 public class FileUploadEntity extends BaseEntity {
 
-    @NotBlank
     private String fileType;
-    @NotNull
     private Long fileSize;
-    @NotBlank
     private String originalName;
-    @NotBlank
     private String savedName;
+    private StorageModules module;
 
     @Override
     public int hashCode() {
@@ -32,6 +28,7 @@ public class FileUploadEntity extends BaseEntity {
         result = prime * result + ((fileSize == null) ? 0 : fileSize.hashCode());
         result = prime * result + ((originalName == null) ? 0 : originalName.hashCode());
         result = prime * result + ((savedName == null) ? 0 : savedName.hashCode());
+        result = prime * result + ((module == null) ? 0 : module.hashCode());
         return result;
     }
 
@@ -63,6 +60,11 @@ public class FileUploadEntity extends BaseEntity {
             if (other.savedName != null)
                 return false;
         } else if (!savedName.equals(other.savedName))
+            return false;
+        if (module == null) {
+            if (other.module != null)
+                return false;
+        } else if (!module.equals(other.module))
             return false;
         return true;
     }

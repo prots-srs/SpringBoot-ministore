@@ -30,12 +30,13 @@ public class MinistoreApplication {
     // };
     // }
 
-    @Bean
+    // @Bean
     // @Order(2)
-    CommandLineRunner init(StorageService storageService, LocalizeService localizeService) {
-        return args -> {
-            storageService.init();
-        };
-    }
+    // CommandLineRunner init(StorageService storageService, LocalizeService
+    // localizeService) {
+    // return args -> {
+    // storageService.init();
+    // };
+    // }
 
 }
