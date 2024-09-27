@@ -1,8 +1,5 @@
 package com.protsdev.ministore;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,9 +61,9 @@ class WebSecurityConfig {
                                 "/error",
                                 "/localize",
                                 "/h2-console/**",
-                                "/actuator/health")
+                                "/actuator/**")
                         .permitAll()
-                        .requestMatchers("/actuator/**", "/panel/**")
+                        .requestMatchers("/panel/**")
                         .hasRole("ADMIN")
                         .anyRequest().authenticated())
                 // .sessionManagement((session) -> session.maximumSessions(1))
@@ -79,7 +76,7 @@ class WebSecurityConfig {
                         .permitAll())
                 .httpBasic(Customizer.withDefaults())
                 .csrf(Customizer.withDefaults())
-                .securityMatcher("/h2-console/**", "/actuator/**", "/panel/**", "/login", "/logout");
+                .securityMatcher("/h2-console/**", "/panel/**", "/login", "/logout");
 
         return http.build();
     }

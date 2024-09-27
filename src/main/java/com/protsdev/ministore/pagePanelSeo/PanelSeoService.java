@@ -5,6 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
+// import org.apache.logging.log4j.core.Logger;
+// import org.apache.logging.log4j.Logger;
+// import org.apache.logging.log4j.core.impl.Log4jContextFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +21,13 @@ import com.protsdev.ministore.pageCommon.ListPagination;
 import com.protsdev.ministore.pageCommon.PageSeo;
 import com.protsdev.ministore.pageCommon.PanelService;
 
+import lombok.extern.log4j.Log4j2;
+
 @Service
+@Log4j2
 public class PanelSeoService implements PanelService<PanelSeoFormFields> {
+
+    // private static final Logger LOGGER = LogManager.getLogger();
 
     private SeoRepository repo;
 
@@ -117,16 +129,22 @@ public class PanelSeoService implements PanelService<PanelSeoFormFields> {
     }
 
     public PageSeo getForPublicPage(String page) {
+
+        PageSeo seos;
         if (page == null) {
-            return new PageSeo("title is null", "", "");
+            seos = new PageSeo("title is null", "", "");
         }
 
         var entity = repo.findFirstByPath(page);
         if (entity != null) {
-            return getAsPageSeo(entity);
+            seos = getAsPageSeo(entity);
         } else {
-            return new PageSeo("title not found", "", "");
+            seos = new PageSeo("title not found", "", "");
         }
+
+        log.debug(seos.toString());
+
+        return seos;
     }
 
     private PageSeo getAsPageSeo(SeoEntity entity) {

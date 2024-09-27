@@ -10,6 +10,7 @@ public enum MenuConfigurator {
     PANEL_SEO("/panel/seo", ""),
     PANEL_SERVICE("/panel/service", ""),
     PANEL_PRODUCT("/panel/product", ""),
+    PANEL_BANNER("/panel/banner", ""),
     MP_HOME("#billboard", ""),
     MP_SALE("#yearly-sale", ""),
     MP_BLOG("#latest-blog", ""),

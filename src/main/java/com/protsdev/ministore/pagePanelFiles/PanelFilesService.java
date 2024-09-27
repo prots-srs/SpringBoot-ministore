@@ -36,20 +36,21 @@ public class PanelFilesService implements PanelService<String> {
 
     @Override
     public void create(String item) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public Boolean delete(Long id) {
-        if (id == null)
+        if (id == null) {
             return false;
+        }
 
         if (repo.existsById(id)) {
             try {
                 storageService.deleteById(id);
             } catch (Exception e) {
-                throw new StorageException(localize.getMessage("storage.file.error.delete.file"), e);
+                return false;
+                // throw new
+                // StorageException(localize.getMessage("storage.file.error.delete.file"), e);
             }
         }
 
@@ -96,14 +97,11 @@ public class PanelFilesService implements PanelService<String> {
 
     @Override
     public Optional<String> getById(Long id) {
-        // TODO Auto-generated method stub
         return Optional.empty();
     }
 
     @Override
     public void update(String item, Long id) {
-        // TODO Auto-generated method stub
-
     }
 
 }

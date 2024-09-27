@@ -43,16 +43,6 @@ public class FileSystemStorageService implements StorageService {
         location = Paths.get(properties.getLocation());
     }
 
-    // @Override
-    // public void init() {
-    // try {
-    // Files.createDirectories(location);
-    // } catch (IOException e) {
-    // throw new
-    // StorageException(localize.getMessage("storage.file.error.dir.create"), e);
-    // }
-    // }
-
     @Override
     public void provideStorePlace(StorageModules module) {
         try {
@@ -117,11 +107,6 @@ public class FileSystemStorageService implements StorageService {
         }
         return u;
     }
-
-    // @Override
-    // public Path load(String filename) {
-    // return location.resolve(filename);
-    // }
 
     @Override
     public Optional<ContentFile> loadAsResource(String filename) {

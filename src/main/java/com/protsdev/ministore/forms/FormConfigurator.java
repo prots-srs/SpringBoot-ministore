@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.protsdev.ministore.enums.IconConfigurator;
 import com.protsdev.ministore.enums.ProductTypes;
 import com.protsdev.ministore.localize.LocalizeService;
-import com.protsdev.ministore.pagePanelSeo.PanelSeoFormFields;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

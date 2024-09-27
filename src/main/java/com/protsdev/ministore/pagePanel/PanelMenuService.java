@@ -43,6 +43,7 @@ public class PanelMenuService {
     private TreeSet<PanelMenuItem> getContentMenu(String activeLink) {
         TreeSet<PanelMenuItem> menu = new TreeSet<>();
         activeChild = false;
+
         // files
         menu.add(new PanelMenuItem(3,
                 localizeService
@@ -50,8 +51,10 @@ public class PanelMenuService {
                 MenuConfigurator.PANEL_FILES.getLink(),
                 MenuConfigurator.PANEL_FILES.getIco(),
                 MenuConfigurator.PANEL_FILES.getLink() == activeLink, null, false));
-        if (MenuConfigurator.PANEL_FILES.getLink() == activeLink)
+        if (MenuConfigurator.PANEL_FILES.getLink() == activeLink) {
             activeChild = true;
+        }
+
         // seo
         menu.add(new PanelMenuItem(10,
                 localizeService
@@ -59,26 +62,42 @@ public class PanelMenuService {
                 MenuConfigurator.PANEL_SEO.getLink(),
                 MenuConfigurator.PANEL_SEO.getIco(),
                 MenuConfigurator.PANEL_SEO.getLink() == activeLink, null, false));
-        if (MenuConfigurator.PANEL_SEO.getLink() == activeLink)
+        if (MenuConfigurator.PANEL_SEO.getLink() == activeLink) {
             activeChild = true;
+        }
+
         // service
-        menu.add(new PanelMenuItem(20,
+        menu.add(new PanelMenuItem(30,
                 localizeService
                         .getMessage("page.panel.menu." + MenuConfigurator.PANEL_SERVICE.toString()),
                 MenuConfigurator.PANEL_SERVICE.getLink(),
                 MenuConfigurator.PANEL_SERVICE.getIco(),
                 MenuConfigurator.PANEL_SERVICE.getLink() == activeLink, null, false));
-        if (MenuConfigurator.PANEL_SEO.getLink() == activeLink)
+        if (MenuConfigurator.PANEL_SERVICE.getLink() == activeLink) {
             activeChild = true;
+        }
+
         // products
-        menu.add(new PanelMenuItem(30,
+        menu.add(new PanelMenuItem(40,
                 localizeService
                         .getMessage("page.panel.menu." + MenuConfigurator.PANEL_PRODUCT.toString()),
                 MenuConfigurator.PANEL_PRODUCT.getLink(),
                 MenuConfigurator.PANEL_PRODUCT.getIco(),
                 MenuConfigurator.PANEL_PRODUCT.getLink() == activeLink, null, false));
-        if (MenuConfigurator.PANEL_SEO.getLink() == activeLink)
+        if (MenuConfigurator.PANEL_PRODUCT.getLink() == activeLink) {
             activeChild = true;
+        }
+
+        // banners
+        menu.add(new PanelMenuItem(20,
+                localizeService
+                        .getMessage("page.panel.menu." + MenuConfigurator.PANEL_BANNER.toString()),
+                MenuConfigurator.PANEL_BANNER.getLink(),
+                MenuConfigurator.PANEL_BANNER.getIco(),
+                MenuConfigurator.PANEL_BANNER.getLink() == activeLink, null, false));
+        if (MenuConfigurator.PANEL_BANNER.getLink() == activeLink) {
+            activeChild = true;
+        }
 
         return menu;
     }

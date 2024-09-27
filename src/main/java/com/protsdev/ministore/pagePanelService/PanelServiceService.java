@@ -1,6 +1,5 @@
 package com.protsdev.ministore.pagePanelService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,14 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.ScrollPosition.Direction;
 import org.springframework.stereotype.Service;
 
 import com.protsdev.ministore.dto.PageServiceView;
 import com.protsdev.ministore.pageCommon.ListPagination;
 import com.protsdev.ministore.pageCommon.PanelService;
-import com.protsdev.ministore.pagePanelSeo.PanelSeoFormFields;
-import com.protsdev.ministore.pagePanelSeo.PanelSeoListHeaders;
 
 @Service
 public class PanelServiceService implements PanelService<PanelServiceFormFields> {

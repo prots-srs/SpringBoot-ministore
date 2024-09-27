@@ -7,14 +7,15 @@
     >
       <div class="swiper main-swiper">
         <div class="swiper-wrapper">
-          <div class="swiper-slide">
+          <div class="swiper-slide" th:each="item: ${banners}">
             <div class="container">
               <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                   <div class="banner-content">
-                    <h1 class="display-2 text-uppercase text-dark pb-5">
-                      Your Products Are Great.
-                    </h1>
+                    <h1
+                      class="display-2 text-uppercase text-dark pb-5"
+                      th:text="${item.title}"
+                    ></h1>
                     <!-- <a
                       href="shop.html"
                       class="btn btn-medium btn-dark text-uppercase btn-rounded-none"
@@ -24,30 +25,11 @@
                 </div>
                 <div class="col-md-5">
                   <div class="image-holder">
-                    <img th:src="@{/images/banner-image.png}" alt="banner" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="swiper-slide">
-            <div class="container">
-              <div class="row d-flex flex-wrap align-items-center">
-                <div class="col-md-6">
-                  <div class="banner-content">
-                    <h1 class="display-2 text-uppercase text-dark pb-5">
-                      Technology Hack You Won't Get
-                    </h1>
-                    <!-- <a
-                      href="shop.html"
-                      class="btn btn-medium btn-dark text-uppercase btn-rounded-none"
-                      >Shop Product</a
-                    > -->
-                  </div>
-                </div>
-                <div class="col-md-5">
-                  <div class="image-holder">
-                    <img th:src="@{/images/banner-image.png}" alt="banner" />
+                    <img
+                      th:if="${item.picture} != null"
+                      th:src="@{'/content/' + ${item.picture}}"
+                      alt=""
+                    />
                   </div>
                 </div>
               </div>
@@ -114,7 +96,7 @@
             </div>
           </div>
           <div
-            th:replace="~{components/goods-list::goods-list(${mobiles})}"
+            th:replace="~{components/goods-list::goods-list(${mobiles}, 'product-swiper')}"
           ></div>
         </div>
       </div>
@@ -142,7 +124,7 @@
             </div>
           </div>
           <div
-            th:replace="~{components/goods-list::goods-list(${watches})}"
+            th:replace="~{components/goods-list::goods-list(${watches}, 'product-watch-swiper')}"
           ></div>
         </div>
       </div>

@@ -1,9 +1,5 @@
 package com.protsdev.ministore.pagePublicMain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -13,19 +9,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import com.protsdev.ministore.dto.PageProductView;
 import com.protsdev.ministore.enums.MenuConfigurator;
 import com.protsdev.ministore.enums.ProductTypes;
 import com.protsdev.ministore.localize.LocalizeService;
+import com.protsdev.ministore.pagePanelBanner.PanelBannerService;
 import com.protsdev.ministore.pagePanelProduct.PanelProductService;
-import com.protsdev.ministore.pagePanelProduct.ProductEntity;
-import com.protsdev.ministore.pagePanelProduct.ProductRepository;
 import com.protsdev.ministore.pagePanelSeo.PanelSeoService;
-import com.protsdev.ministore.pagePanelSeo.SeoEntity;
-import com.protsdev.ministore.pagePanelSeo.SeoRepository;
 import com.protsdev.ministore.pagePanelService.PanelServiceService;
-import com.protsdev.ministore.pagePanelService.ServiceEntity;
-import com.protsdev.ministore.pagePanelService.ServiceRepository;
 
 @Controller
 public class PublicPageController {
@@ -40,10 +30,11 @@ public class PublicPageController {
     private PanelProductService productService;
 
     @Autowired
+    private PanelBannerService bannerService;
+
+    @Autowired
     private LocalizeService localizeService;
     private Set<PublicMenuItem> topMenu = new TreeSet<>();
-
-    // Map<ProductTypes, List<ProductView>> products = new HashMap<>();
 
     @ModelAttribute
     public void panelAttribute(Model model) {
@@ -68,6 +59,9 @@ public class PublicPageController {
 
         model.addAttribute("seo", seoService.getForPublicPage("/"));
 
+        var banners = bannerService.getForPublicPage();
+        model.addAttribute("banners", banners);
+
         // service
         var services = serviceService.getForPublicPage();
         model.addAttribute("services", services);
@@ -91,7 +85,7 @@ public class PublicPageController {
         // watch
         var watches = productService.getForPublicPage(ProductTypes.WATCH);
         if (watches.size() > 0) {
-            topMenu.add(new PublicMenuItem(20,
+            topMenu.add(new PublicMenuItem(30,
                     localizeService
                             .getMessage("page.mainpage.menu." + MenuConfigurator.MP_WATCHES.toString()),
                     MenuConfigurator.MP_WATCHES.getLink(), false));

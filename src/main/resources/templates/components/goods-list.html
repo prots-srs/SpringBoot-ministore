@@ -1,6 +1,7 @@
-<div class="swiper product-swiper" th:fragment="goods-list(products)">
-  <!-- product-watch-swiper -->
-
+<div
+  th:fragment="goods-list(products, classSwiper)"
+  th:class="|swiper ${classSwiper}|"
+>
   <div class="swiper-wrapper">
     <div class="swiper-slide" th:each="item: ${products}">
       <div class="product-card position-relative">

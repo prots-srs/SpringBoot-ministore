@@ -1,7 +1,6 @@
 package com.protsdev.ministore.pagePanelSeo;
 
 import com.protsdev.ministore.pageCommon.BaseEntity;
-import com.protsdev.ministore.pageCommon.PageSeo;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
